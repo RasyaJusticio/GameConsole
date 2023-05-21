@@ -3,7 +3,7 @@
 Engine::Engine()
 {
 	mLedController.shutdown(0, false);
-	mLedController.shutdown(1, true);
+	mLedController.shutdown(1, false);
 
 	pinMode(PIN_BUTTON, INPUT);
 	pinMode(PIN_BUZZER, OUTPUT);
@@ -87,7 +87,7 @@ void Engine::SetPixel(int x, int y, boolean value)
 	if (x < 8) // mDisplay0[]
 	{
 		x = 7 - x;
-		y = y - x;
+		y = 7 - y;
 
 		if (value)
 		{
@@ -100,10 +100,10 @@ void Engine::SetPixel(int x, int y, boolean value)
 	{
 		if (value)
 		{
-			mDisplay1[x] |= 1 << y;
+			mDisplay1[x - 8] |= 1 << y;
 		} else
 		{
-			mDisplay1[x] &= ~(1 << y);
+			mDisplay1[x - 8] &= ~(1 << y);
 		}
 	}
 }

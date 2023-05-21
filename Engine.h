@@ -51,7 +51,7 @@ public:
 
 	void SetPixel(int x, int y, boolean value = true);
 
-	void SetPixel();
+	// TODO: Add support for Vector2 for SetPixel function
 
 	void PlaySound(int frequency, int duration);
 
