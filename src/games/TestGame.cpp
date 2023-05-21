@@ -9,12 +9,6 @@ TestGame::TestGame() {
 	mIsGameOver = false;
 }
 
-int TestGame::Sign(float value) {
-	if (value == 0) { return; }
-
-	return (value < 0) ? -1 : 1;
-}
-
 bool TestGame::IsGameOver()
 {
 	return mIsGameOver;
@@ -61,4 +55,10 @@ void TestGame::Update(Engine& engine) {
 	}
 
 	engine.SetPixel(mPosition);
+}
+
+int TestGame::Sign(float value) {
+	if (value == 0) { return; }
+
+	return (value < 0) ? -1 : 1;
 }

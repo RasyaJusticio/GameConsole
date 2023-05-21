@@ -68,6 +68,7 @@ void Engine::SetPixel(int x, int y, boolean value)
 {
 	if ((x < 0 || x >= DISPLAY_WIDTH) || (y < 0 || y >= DISPLAY_HEIGHT))
 	{
+		/*
 		Serial.print("ERROR : ");
 		if (x < 0 || x >= DISPLAY_WIDTH)
 		{
@@ -82,6 +83,8 @@ void Engine::SetPixel(int x, int y, boolean value)
 			Serial.print(" is out of bounds. ");
 		}
 		Serial.print("\n");
+		*/
+		return;
 	}
 	
 	if (x < 8) // mDisplay0[]

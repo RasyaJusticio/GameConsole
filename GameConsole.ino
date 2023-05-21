@@ -1,13 +1,15 @@
+#include <LedControl.h>
 #include "Engine.h"
 #include "src/games/TestGame.h"
+#include "src/games/SnakeGame.h"
 
 const unsigned long TARGET_DELAY = 16;
 unsigned long oldTime;
 
-int activeGameId = -1;
+int activeGameId = 1;
 
 Engine engine = Engine();
-Game* game = new TestGame();
+Game* game = new SnakeGame();
 
 void setup()
 {
@@ -27,6 +29,7 @@ void loop()
 	engine.ClearDisplay();
 	engine.Update(deltaTime);
 	UpdateGame(deltaTime);
+	RestartGameIfOver();
 	engine.DrawToDisplay();
 
 	unsigned long delayTime = GetDelayTime(frameStartTime);
@@ -39,7 +42,28 @@ void UpdateGame(float deltaTime)
 }
 
 void RestartGameIfOver()
-{}
+{
+	if (game->IsGameOver())
+	{
+		delete game;
+
+		delay(1000);
+
+		switch (activeGameId)
+		{
+			case 1:
+				game = new SnakeGame();
+				break;
+			case 0:
+				game = new TestGame();
+				break;
+			default:
+				Serial.print("\nInvalid game id!\n");
+				exit(1);
+				break;
+		}
+	}
+}
 
 float GetDeltaTime(unsigned long frameStartTime)
 {	
