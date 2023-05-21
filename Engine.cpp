@@ -108,6 +108,11 @@ void Engine::SetPixel(int x, int y, boolean value)
 	}
 }
 
+void Engine::SetPixel(Vector2 position, boolean value)
+{
+	SetPixel(position.x, position.y, value);
+}
+
 void Engine::PlaySound(int frequency, int duration)
 {
 	tone(PIN_BUZZER, frequency, duration);

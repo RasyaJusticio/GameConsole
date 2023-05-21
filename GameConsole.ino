@@ -1,11 +1,13 @@
 #include "Engine.h"
+#include "src/games/TestGame.h"
 
 const unsigned long TARGET_DELAY = 16;
 unsigned long oldTime;
 
-int activeGameId = 0;
+int activeGameId = -1;
 
 Engine engine = Engine();
+Game* game = new TestGame();
 
 void setup()
 {
@@ -24,17 +26,17 @@ void loop()
 
 	engine.ClearDisplay();
 	engine.Update(deltaTime);
-	engine.SetPixel(0, 0); // Test
+	UpdateGame(deltaTime);
 	engine.DrawToDisplay();
-
-	Serial.println("Test");
 
 	unsigned long delayTime = GetDelayTime(frameStartTime);
 	if (delayTime) { delay(delayTime); }
 }
 
 void UpdateGame(float deltaTime)
-{}
+{
+	game->Update(engine);
+}
 
 void RestartGameIfOver()
 {}

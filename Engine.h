@@ -2,6 +2,7 @@
 
 #include <Arduino.h>
 #include <LedControl.h>
+#include "src/Vector2.h"
 
 class Engine
 {
@@ -51,7 +52,7 @@ public:
 
 	void SetPixel(int x, int y, boolean value = true);
 
-	// TODO: Add support for Vector2 for SetPixel function
+	void SetPixel(Vector2 position, boolean value = true);
 
 	void PlaySound(int frequency, int duration);
 
