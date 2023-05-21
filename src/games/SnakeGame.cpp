@@ -13,22 +13,28 @@ SnakeGame::SnakeGame()
 	mNextDirection = mDirection;
 
 	mIsFoodExists = false;
+	mIsFoodBlinking = false;
+	mLastBlinkState = false;
+	mBlinkingCount = 0;
+	mTimeSinceLastBlink = 0;
 }
 
 void SnakeGame::Update(Engine& engine)
 {
-	mTimeSinceLastMove += engine.deltaTime;
-
-	if (mGameState == IsOver)
+	if (mGameState != IsPlaying)
 	{
+		if (mGameState == IsRestarting) { StartGameOverSequence(engine); }
+
 		return;
 	}
 
+	mTimeSinceLastMove += engine.deltaTime;
+
 	GetUserInput(engine);
 
-	if (mTimeSinceLastMove > GAME_INTERVAL)
+	if (mTimeSinceLastMove > (GAME_INTERVAL - mAdditionalInterval))
 	{
-		mTimeSinceLastMove -= GAME_INTERVAL;
+		mTimeSinceLastMove -= (GAME_INTERVAL - mAdditionalInterval);
 
 		MoveSnake();
 
@@ -44,7 +50,32 @@ void SnakeGame::Update(Engine& engine)
 
 	if (mIsFoodExists)
 	{
-		engine.SetPixel(mFoodPosition);
+		if (mIsFoodBlinking)
+		{
+			mTimeSinceLastBlink += engine.deltaTime;
+
+			if (mTimeSinceLastBlink > 0.05)
+			{
+				mTimeSinceLastBlink = 0;
+
+				mLastBlinkState = !mLastBlinkState;
+				engine.SetPixel(mFoodPosition, mLastBlinkState);
+
+				if (mLastBlinkState)
+				{
+					mBlinkingCount--;
+				}
+			}
+
+			if (mBlinkingCount <= 0)
+			{
+				mIsFoodBlinking = false;
+			}
+		} else
+		{
+			engine.SetPixel(mFoodPosition);
+		}
+		
 	}
 }
 
@@ -80,7 +111,7 @@ void SnakeGame::CheckCollision(Vector2 headPosition, int bodyIndex)
 {
 	if (headPosition.x == mBodyX[bodyIndex] && headPosition.y == mBodyY[bodyIndex])
 	{
-		mGameState = IsOver;
+		mGameState = IsRestarting;
 	}
 }
 
@@ -115,6 +146,15 @@ void SnakeGame::HandleEating(Engine& engine)
 		{
 			mIsFoodExists = false;
 			GrowSnake();
+
+			if (mSnakeLength % 5 == 0)
+			{
+				engine.PlaySound(2000, 1000);
+				mAdditionalInterval += mIntervalMultiplier;
+			} else
+			{
+				engine.PlaySound(1000, 200);
+			}
 		}
 	}
 }
@@ -140,6 +180,10 @@ void SnakeGame::GenerateFood()
 		{
 			mFoodPosition = { randomIndex % WIDTH, randomIndex / WIDTH };
 			mIsFoodExists = true;
+			mIsFoodBlinking = true;
+			mLastBlinkState = false;
+			mBlinkingCount = 5;
+
 			return;
 		}
 	}
@@ -167,6 +211,35 @@ void SnakeGame::DrawSnake(Engine& engine)
 	{
 		engine.SetPixel((int)mBodyX[i], (int)mBodyY[i], true);
 	}
+}
+
+void SnakeGame::StartGameOverSequence(Engine& engine)
+{
+	if (mIsFoodExists)
+	{
+		engine.SetPixel(mFoodPosition, false);
+	}
+
+	delay(1000);
+
+	for (int x = 0; x < 3; x++)
+	{
+		engine.ClearDisplay();
+		engine.DrawToDisplay();
+
+		delay(150);
+
+		for (int i = 0; i < mSnakeLength; i++)
+		{
+			engine.SetPixel((int)mBodyX[i], (int)mBodyY[i], true);
+		}
+		engine.DrawToDisplay();
+		engine.PlaySound(500, 150);
+
+		delay(150);
+	}
+
+	mGameState = IsOver;
 }
 
 int SnakeGame::Sign(float value) {

@@ -12,6 +12,9 @@ private:
 	const float GAME_INTERVAL = 0.3;
 	static const int WIDTH = 16;
 	static const int HEIGHT = 8;
+
+	float mAdditionalInterval = 0;
+	float mIntervalMultiplier = 0.03;
 	
 	float mTimeSinceLastMove;
 
@@ -25,6 +28,10 @@ private:
 
 	bool mIsFoodExists;
 	Vector2 mFoodPosition;
+	bool mIsFoodBlinking;
+	bool mLastBlinkState;
+	int mBlinkingCount;
+	float mTimeSinceLastBlink;
 
 	int Sign(float value);
 
@@ -41,6 +48,8 @@ private:
 	void GrowSnake();
 
 	void DrawSnake(Engine& engine);
+
+	void StartGameOverSequence(Engine& engine);
 public:
 	SnakeGame();
 
